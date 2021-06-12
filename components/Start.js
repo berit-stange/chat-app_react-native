@@ -146,24 +146,24 @@ const styles = StyleSheet.create({
         backgroundColor: '#090C08',
         width: 50,
         height: 50,
-        borderRadius: 30,
+        borderRadius: 50 / 2,
     },
     backgroundColor2: {
         backgroundColor: '#474056',
         width: 50,
         height: 50,
-        borderRadius: 30,
+        borderRadius: 50 / 2,
     },
     backgroundColor3: {
         backgroundColor: '#8A95A5',
         width: 50,
         height: 50,
-        borderRadius: 30,
+        borderRadius: 50 / 2,
     },
     backgroundColor4: {
         backgroundColor: '#B9C6AE',
         width: 50,
         height: 50,
-        borderRadius: 30,
+        borderRadius: 50 / 2,
     },
 });
