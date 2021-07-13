@@ -22,7 +22,7 @@ export default class Chat extends React.Component {
             user: {
                 _id: '',
                 name: '',
-                avatar: '',
+                // avatar: '',
             }
         };
         if (!firebase.apps.length) {
@@ -53,8 +53,9 @@ export default class Chat extends React.Component {
                 user: {
                     // _id: '',
                     _id: user.uid,
-                    name: '',
-                    avatar: null,
+                    // name: '',
+                    name: this.props.route.params.name,
+                    // avatar: null,
                 },
                 //messages must follow a certain format to work with the Gifted Chat library
                 //more-detailed at “Message Object” section on the Gifted Chat repo
@@ -75,7 +76,7 @@ export default class Chat extends React.Component {
     addMessage() {
         const message = this.state.messages[0];
         this.referenceChatMessages.add({ // add() = firestore method, save object to firestore
-            _id: message._id,
+            // _id: message._id,
             createdAt: message.createdAt,
             text: message.text,
             uid: this.state.uid,
