@@ -17,6 +17,7 @@ export default class Chat extends React.Component {
         this.state = {
             //chat app needs to send, receive, and display messages 
             messages: [],
+            uid: 0,
             _id: 0,
             user: {
                 _id: '',
@@ -47,10 +48,11 @@ export default class Chat extends React.Component {
                 await firebase.auth().signInAnonymously();
             }
             this.setState({
-                // uid: user.uid,
+                uid: user.uid,
                 messages: [],
                 user: {
-                    _id: '',
+                    // _id: '',
+                    _id: user.uid,
                     name: '',
                     avatar: null,
                 },
@@ -76,7 +78,7 @@ export default class Chat extends React.Component {
             _id: message._id,
             createdAt: message.createdAt,
             text: message.text,
-            // uid: '',
+            uid: this.state.uid,
             user: message.user,
         })
     }
