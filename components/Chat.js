@@ -53,7 +53,6 @@ export default class Chat extends React.Component {
                 user: {
                     // _id: '',
                     _id: user.uid,
-                    // name: '',
                     name: this.props.route.params.name,
                     // avatar: null,
                 },
