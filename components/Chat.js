@@ -4,6 +4,8 @@ import { Bubble, GiftedChat } from 'react-native-gifted-chat';
 import firebase from 'firebase';
 // import firestore from 'firebase';
 import 'firebase/firestore';
+import AsyncStorage from '@react-native-community/async-storage'; //persistent key-value storage mechanism to store strings
+//data is stored on device
 
 //establish connection to Firestore
 // const firebase = require('firebase');
