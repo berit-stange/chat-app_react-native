@@ -3,8 +3,9 @@ import { View, Platform, KeyboardAvoidingView } from 'react-native';
 import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
 import firebase from 'firebase';
 import 'firebase/firestore';
-import AsyncStorage from '@react-native-community/async-storage'; //data is stored on device - persistent key-value storage mechanism to store strings
+// import AsyncStorage from '@react-native-community/async-storage'; //data is stored on device - persistent key-value storage mechanism to store strings
 // import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo'; //is user on- or offline? 
 
 
@@ -13,7 +14,6 @@ export default class Chat extends React.Component {
     constructor() {
         super();
         this.state = {
-            //chat app needs to send, receive, and display messages 
             messages: [],
             uid: 0,
             _id: 0,
@@ -40,6 +40,50 @@ export default class Chat extends React.Component {
     }
 
 
+    componentDidMount() {
+        NetInfo.fetch().then(connection => {
+            if (connection.isConnected) {
+                this.setState({ isConnected: true });
+                console.log('online');
+                this.authUnsubscribe = firebase.auth()
+                    .onAuthStateChanged(async (user) => {
+                        if (!user) {
+                            await firebase.auth().signInAnonymously();
+                        }
+
+                        this.setState({
+                            // isConnected: true,
+                            uid: user.uid,
+                            messages: [],
+                            user: {
+                                _id: user.uid,
+                                name: this.props.route.params.name,
+                                // avatar: null,
+                            },
+                        });
+                        // this.referenceChatMessages = firebase.firestore().collection('messages');
+                        //listen for updates in collection using Firestore’s onSnapshot() function
+                        this.unsubscribe = this.referenceChatMessages
+                            .orderBy('createdAt', 'desc')
+                            .onSnapshot(this.onCollectionUpdate);
+                    });
+            } else {
+                console.log('offline');
+                this.setState({
+                    isConnected: false
+                });
+                this.getMessages();
+            }
+        });
+    }
+
+
+    componentWillUnmount() {
+        this.authUnsubscribe();
+        this.unsubscribe(); //stop listening for changes
+    }
+
+
     onCollectionUpdate = (querySnapshot) => {
         const messages = [];
         //go through each document:
@@ -54,7 +98,7 @@ export default class Chat extends React.Component {
                 user: {
                     _id: data.user._id,
                     name: data.user.name,
-                    avatar: data.user.avatar,
+                    // avatar: data.user.avatar,
                 },
             });
         });
@@ -77,18 +121,15 @@ export default class Chat extends React.Component {
 
     async getMessages() { //async await
         let messages = '';
-        // let user = '';
         try {
             messages = await AsyncStorage.getItem('messages') || [];
-            // user = await AsyncStorage.getItem('user');
             this.setState({
                 messages: JSON.parse(messages),
-                // user: user,
             });
         } catch (error) {
             console.log(error.message);
         }
-    }
+    };
 
     async saveMessages() {
         try {
@@ -96,7 +137,7 @@ export default class Chat extends React.Component {
         } catch (error) {
             console.log(error.message);
         }
-    }
+    };
 
     async deleteMessages() {
         try {
@@ -107,7 +148,7 @@ export default class Chat extends React.Component {
         } catch (error) {
             console.log(error.message);
         }
-    }
+    };
 
     onSend(messages = []) {
         // the function setState() is called with the parameter previousState > reference to the component’s state at the time the change is applied
@@ -149,49 +190,6 @@ export default class Chat extends React.Component {
     }
 
 
-
-    componentDidMount() {
-        NetInfo.fetch().then(connection => {
-            if (connection.isConnected) {
-                console.log('online');
-                this.authUnsubscribe = firebase.auth()
-                    .onAuthStateChanged(async (user) => {
-                        if (!user) {
-                            await firebase.auth().signInAnonymously();
-                        }
-                        this.setState({
-                            isConnected: true,
-                            uid: user.uid,
-                            messages: [],
-                            user: {
-                                _id: user.uid,
-                                name: this.props.route.params.name,
-                                // avatar: null,
-                            },
-                        });
-                        this.referenceChatMessages = firebase.firestore().collection('messages');
-                        //listen for updates in collection using Firestore’s onSnapshot() function
-                        this.unsubscribe = this.referenceChatMessages
-                            .orderBy('createdAt', 'desc')
-                            .onSnapshot(this.onCollectionUpdate);
-                    });
-            } else {
-                console.log('offline');
-                this.setState({
-                    isConnected: false
-                });
-                this.getMessages();
-            }
-        });
-    }
-
-
-    componentWillUnmount() {
-        this.authUnsubscribe();
-        this.unsubscribe(); //stop listening for changes
-    }
-
-
     render() {
         // let name = this.props.route.params.name;  ....OR: 
         let { name, backgroundColor } = this.props.route.params;
@@ -219,4 +217,3 @@ export default class Chat extends React.Component {
         );
     };
 }
-
