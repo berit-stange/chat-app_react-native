@@ -43,7 +43,7 @@ Page 2
 
 
 
-## Technical
+## Tech Stack
 - React Native
 - Expo
 - Gifted Chat library (chat screen and the chat functionality)
@@ -64,3 +64,57 @@ Expo will be used for development of the app and Google Firestore to store the c
 5. Why — Mobile chat apps are among the most commonly downloaded and used apps
 in the world, so knowing how to build a chat app is an indispensable skill. The app
 will demonstrate React Native development skills.
+
+
+## Getting Started: Set Up
+#### Setting Up Expo and  Development Environment
+- install Node.js, and  the Expo CLI in your terminal with this command:
+`
+npm install expo-cli --global
+`
+- download Expo app on device to run the app directly from the Expo app
+- create Expo account: [Expo sign-up page](https://expo.io/signup)
+
+
+##### Setting up an Emulator
+- download and install [Android Studio](https://docs.expo.io/versions/v32.0.0/workflow/android-studio-emulator/ "Android Studio")
+- follow the on-screen installation instructions
+
+
+#### required Libraries
+install all dependencies:
+
+ `npm i --save @react-native-community/async-storage @react-native-community/masked-view @react-native-community/netinfo @react-navigation/native @react-navigation/stack babel-preset-env better-docs expo expo-font expo-image-picker expo-location expo-permissions expo-updates firebase fsevents prop-types react react-dom react-google-maps react-native react-native-gesture-handler react-native-gifted-chat react-native-keyboard-spacer react-native-maps react-native-parsed-text react-native-reanimated react-native-safe-area-context react-native-screens react-native-svg react-native-web react-native-web-maps react-navigaion react-navigation-stack`
+
+
+ #### Setting up Firebase
+ - set up firebase account 
+
+ - initialize Firebase in app within constructor():
+ ```sh
+constructor() {
+    super();
+    this.state = {
+        messages: []
+    };
+    if (!firebase.apps.length) {
+        firebase.initializeApp({
+        apiKey: 'YOUR_API_KEY',
+        authDomain: 'YOUR_AUTH_DOMAIN',
+        databaseURL: 'YOUR_DATABASE_URL',
+        projectID: 'YOUR_PROJ_ID',
+        storageBucket: 'YOUR_BUCKET',
+        messagingSenderId: 'YOUR_SENDER_ID',
+        appId: 'YOUR_APP_ID',
+        measurementID: 'YOUR_MEASUREMENT_ID'
+        })
+    }
+    
+    // refers to messages collection in firebase DB
+    this.referenceMessages = firebase.firestore().collection('messages');
+}
+```
+
+#### Starting the App
+- navigate to trepository in your terminal and type:
+`expo start`
