@@ -210,52 +210,6 @@ export default class Chat extends React.Component {
         )
     }
 
-    // pickImage function
-    // pickImage = async () => {
-    //     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-    //     // const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
-    //     if (status === 'granted') {
-    //         let result = await ImagePicker.launchImageLibraryAsync({
-    //             mediaTypes: 'Images',
-    //             // mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    //             // mediaTypes: "All",
-    //         }).catch(error => console.log(error));
-
-    //         if (!result.cancelled) {
-    //             this.setState({
-    //                 image: result
-    //             });
-    //         }
-    //     }
-    // }
-
-    // takePhoto = async () => {
-    //     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL, Permissions.CAMERA);
-    //     if (status === 'granted') {
-    //         let result = await ImagePicker.launchCameraAsync()
-    //             .catch(error => console.log(error));
-
-    //         if (!result.cancelled) {
-    //             this.setState({
-    //                 image: result
-    //             });
-    //         }
-    //     }
-    // }
-
-    // getLocation = async () => {
-    //     const { status } = await Permissions.askAsync(Permissions.LOCATION);
-    //     if (status === 'granted') {
-    //         let result = await Location.getCurrentPositionAsync({})
-    //             .catch(error => console.log(error));
-
-    //         if (result) {
-    //             this.setState({
-    //                 location: result
-    //             });
-    //         }
-    //     }
-    // }
 
     componentDidMount() {
         NetInfo.fetch().then(connection => {
@@ -358,9 +312,7 @@ export default class Chat extends React.Component {
 
                 <GiftedChat
                     renderBubble={this.renderBubble.bind(this)}
-                    // renderBubble={this.renderBubble}
                     renderInputToolbar={this.renderInputToolbar.bind(this)}
-                    // renderInputToolbar={this.renderInputToolbar}
                     renderActions={this.renderCustomActions}
                     renderCustomView={this.renderCustomView}
                     messages={this.state.messages}
