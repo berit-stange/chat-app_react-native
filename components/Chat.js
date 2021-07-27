@@ -8,20 +8,30 @@ import 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo'; //is user on- or offline? 
 
+// import * as Permissions from 'expo-permissions';
+// import * as ImagePicker from 'expo-image-picker';
+// import * as Location from 'expo-location';
+
+import MapView from 'react-native-maps';
+// import { MapView } from 'expo';
+import CustomActions from './CustomActions';
+
 
 export default class Chat extends React.Component {
     //state initialization within the constructor
     constructor() {
         super();
+
         this.state = {
             messages: [],
             uid: 0,
-            _id: 0,
+            // _id: 0,
             user: {
                 _id: '',
                 name: '',
                 // avatar: '',
             },
+            image: null,
             isConnected: false,
         };
         if (!firebase.apps.length) {
@@ -40,7 +50,6 @@ export default class Chat extends React.Component {
     }
 
 
-
     onCollectionUpdate = (querySnapshot) => {
         const messages = [];
         //go through each document:
@@ -57,6 +66,8 @@ export default class Chat extends React.Component {
                     name: data.user.name,
                     // avatar: data.user.avatar,
                 },
+                image: data.image,
+                location: data.location
             });
         });
         this.setState({
@@ -64,18 +75,39 @@ export default class Chat extends React.Component {
         });
     };
 
-
     addMessage() {
         const message = this.state.messages[0];
         this.referenceChatMessages.add({ // add() = firestore method, save object to firestore
             _id: message._id,
             createdAt: message.createdAt,
-            text: message.text,
+            text: message.text || '',
             uid: this.state.uid,
             user: message.user,
+            image: message.image || null,
+            // image: 'https://facebook.github.io/react-native/img/header_logo.png',
+            location: message.location || null,
+            // location: {
+            //     latitude: 48.864601,
+            //     longitude: 2.398704,
+            // },
         })
     }
 
+    handleConnectivityChange = (state) => {
+        const isConnected = state.isConnected;
+        if (isConnected == true) {
+            this.setState({
+                isConnected: true,
+            });
+            this.unsubscribe = this.referenceChatMessages
+                .orderBy("createdAt", "desc")
+                .onSnapshot(this.onCollectionUpdate);
+        } else {
+            this.setState({
+                isConnected: false,
+            });
+        }
+    };
 
     async saveMessages() {
         try {
@@ -84,6 +116,17 @@ export default class Chat extends React.Component {
             console.log(error.message);
         }
     };
+
+    // saveMessages = async () => {
+    //     try {
+    //       await AsyncStorage.setItem(
+    //         "messages",
+    //         JSON.stringify(this.state.messages)
+    //       );
+    //     } catch (error) {
+    //       console.log(error.message);
+    //     }
+    //   };
 
     async getMessages() { //async await
         let messages = '';
@@ -97,6 +140,18 @@ export default class Chat extends React.Component {
         }
     };
 
+    // getMessages = async () => {
+    //     let messages = "";
+    //     try {
+    //       messages = (await AsyncStorage.getItem("messages")) || [];
+    //       this.setState({
+    //         messages: JSON.parse(messages),
+    //       });
+    //     } catch (error) {
+    //       console.log(error.message);
+    //     }
+    //   };
+
     async deleteMessages() {
         try {
             await AsyncStorage.removeItem('messages');
@@ -107,6 +162,14 @@ export default class Chat extends React.Component {
             console.log(error.message);
         }
     };
+
+    // deleteMessages = async () => {
+    //     try {
+    //         await AsyncStorage.removeItem("messages");
+    //     } catch (error) {
+    //         console.log(error.message);
+    //     }
+    // };
 
     onSend(messages = []) {
         // the function setState() is called with the parameter previousState > reference to the component’s state at the time the change is applied
@@ -147,7 +210,52 @@ export default class Chat extends React.Component {
         )
     }
 
+    // pickImage function
+    // pickImage = async () => {
+    //     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+    //     // const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
+    //     if (status === 'granted') {
+    //         let result = await ImagePicker.launchImageLibraryAsync({
+    //             mediaTypes: 'Images',
+    //             // mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    //             // mediaTypes: "All",
+    //         }).catch(error => console.log(error));
 
+    //         if (!result.cancelled) {
+    //             this.setState({
+    //                 image: result
+    //             });
+    //         }
+    //     }
+    // }
+
+    // takePhoto = async () => {
+    //     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL, Permissions.CAMERA);
+    //     if (status === 'granted') {
+    //         let result = await ImagePicker.launchCameraAsync()
+    //             .catch(error => console.log(error));
+
+    //         if (!result.cancelled) {
+    //             this.setState({
+    //                 image: result
+    //             });
+    //         }
+    //     }
+    // }
+
+    // getLocation = async () => {
+    //     const { status } = await Permissions.askAsync(Permissions.LOCATION);
+    //     if (status === 'granted') {
+    //         let result = await Location.getCurrentPositionAsync({})
+    //             .catch(error => console.log(error));
+
+    //         if (result) {
+    //             this.setState({
+    //                 location: result
+    //             });
+    //         }
+    //     }
+    // }
 
     componentDidMount() {
         NetInfo.fetch().then(connection => {
@@ -164,11 +272,25 @@ export default class Chat extends React.Component {
                             // isConnected: true,
                             uid: user.uid,
                             messages: [],
+                            // messages: [
+                            //     {
+                            //         image: 'https://facebook.github.io/react-native/img/header_logo.png',
+                            //         location: {
+                            //             latitude: 48.864601,
+                            //             longitude: 2.398704,
+                            //         },
+                            //     }
+                            // ],
                             user: {
                                 _id: user.uid,
                                 name: this.props.route.params.name,
                                 // avatar: null,
                             },
+                            // image: 'https://facebook.github.io/react-native/img/header_logo.png',
+                            // location: {
+                            //     latitude: 48.864601,
+                            //     longitude: 2.398704,
+                            // },
                         });
                         // this.referenceChatMessages = firebase.firestore().collection('messages');
                         //listen for updates in collection using Firestore’s onSnapshot() function
@@ -186,11 +308,41 @@ export default class Chat extends React.Component {
         });
     }
 
-
     componentWillUnmount() {
         this.authUnsubscribe();
         this.unsubscribe(); //stop listening for changes
     }
+
+    //create the circle button
+    renderCustomActions = (props) => {
+        return <CustomActions {...props} />;
+    };
+    // renderCustomActions = (props) => <CustomActions {...props} />;
+
+    //render map view
+    renderCustomView(props) {
+        const { currentMessage } = props;
+        if (currentMessage.location) {
+            return (
+                <MapView
+                    style={{
+                        width: 150,
+                        height: 100,
+                        borderRadius: 13,
+                        margin: 3
+                    }}
+                    region={{
+                        latitude: currentMessage.location.latitude,
+                        longitude: currentMessage.location.longitude,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421,
+                    }}
+                />
+            );
+        }
+        return null;
+    }
+
 
     render() {
         // let name = this.props.route.params.name;  ....OR: 
@@ -201,14 +353,19 @@ export default class Chat extends React.Component {
             //rendering chat interface
             //Gifted Chat provides its own component, comes with its own props
             //provide GiftedChat with custom messages, information, function etc.
-
+            //fullscreen component
             <View style={{ flex: 1, backgroundColor: backgroundColor }} >
 
                 <GiftedChat
                     renderBubble={this.renderBubble.bind(this)}
+                    // renderBubble={this.renderBubble}
                     renderInputToolbar={this.renderInputToolbar.bind(this)}
+                    // renderInputToolbar={this.renderInputToolbar}
+                    renderActions={this.renderCustomActions}
+                    renderCustomView={this.renderCustomView}
                     messages={this.state.messages}
                     onSend={messages => this.onSend(messages)}
+                    isConnected={this.state.isConnected}
                     user={this.state.user}
                 />
                 {
