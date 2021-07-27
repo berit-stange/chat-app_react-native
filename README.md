@@ -88,7 +88,7 @@ install all dependencies:
 
 
  #### Setting up Firebase
- - set up firebase account 
+ - set up firebase account: [Firebase](https://firebase.google.com)
 
  - initialize Firebase in app within constructor():
  ```sh
