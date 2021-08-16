@@ -1,6 +1,8 @@
 # Chat App
 Chat app for mobile devices using React Native. The app will provide users with a chat interface and options to share images and their location.
 
+![MChat App](img/chat-app-emulator.gif)
+
 
 ## Features and Requirements
 Users can enter their name and choose a background color for the chat screen before joining the chat
@@ -68,7 +70,7 @@ will demonstrate React Native development skills.
 
 ## Getting Started: Set Up
 #### Setting Up Expo and  Development Environment
-- install Node.js, and  the Expo CLI in your terminal with this command:
+Install Node.js, and the Expo CLI in your terminal with this command:
 `
 npm install expo-cli --global
 `
@@ -81,16 +83,18 @@ npm install expo-cli --global
 - follow the on-screen installation instructions
 
 
-#### required Libraries
-install all dependencies:
-
+#### Dependencies
  `npm i --save @react-native-community/async-storage @react-native-community/masked-view @react-native-community/netinfo @react-navigation/native @react-navigation/stack babel-preset-env better-docs expo expo-font expo-image-picker expo-location expo-permissions expo-updates firebase fsevents prop-types react react-dom react-google-maps react-native react-native-gesture-handler react-native-gifted-chat react-native-keyboard-spacer react-native-maps react-native-parsed-text react-native-reanimated react-native-safe-area-context react-native-screens react-native-svg react-native-web react-native-web-maps react-navigaion react-navigation-stack`
 
+Install all dependencies:
+```
+npm install
+```
 
- #### Setting up Firebase
- - set up firebase account: [Firebase](https://firebase.google.com)
+## Setting up Firebase
+Set up firebase account: [Firebase](https://firebase.google.com)
 
- - initialize Firebase in app within constructor():
+Initialize Firebase in app within constructor():
  ```sh
 constructor() {
     super();
@@ -116,5 +120,5 @@ constructor() {
 ```
 
 #### Starting the App
-- navigate to trepository in your terminal and type:
+Navigate to trepository in your terminal and type:
 `expo start`
